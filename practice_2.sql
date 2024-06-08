@@ -54,6 +54,12 @@ FROM Teacher
 GROUP BY teacher_id;
 
 #Exercise 11
-
+SELECT user_id, count(distinct follower_id) AS followers_count
+FROM Followers
+GROUP BY user_id
+ORDER BY user_id ASC;
 
 #Exercise 12
+SELECT class FROM Courses
+GROUP BY class
+HAVING COUNT(*) > 4;

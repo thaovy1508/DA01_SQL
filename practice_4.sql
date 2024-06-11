@@ -1,16 +1,14 @@
 #Exercise 1
 SELECT 
-
 COUNT(CASE 
   WHEN device_type = 'laptop' THEN 1 
   ELSE NULL
 END) laptop_reviews,
-
+  
 COUNT(CASE 
   WHEN device_type IN ('tablet','phone')  THEN 1 
   ELSE NULL
 END) mobile_reviews
-
 FROM viewership;
 
 #Exercise 2

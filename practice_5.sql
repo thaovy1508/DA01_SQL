@@ -16,3 +16,34 @@ JOIN texts t
 ON t.email_id = e.email_id;
 
 #Exercise 3
+SELECT age_bucket, 
+ROUND(100.0*SUM(CASE WHEN activity_type = 'open' THEN time_spent ELSE 0 END)/SUM(time_spent),2) as open_perc,
+ROUND(100.0*SUM(CASE WHEN activity_type = 'send' THEN time_spent ELSE 0 END)/SUM(time_spent),2) as send_perc
+FROM activities a
+LEFT JOIN age_breakdown b
+ON a.user_id = b.user_id 
+WHERE a.activity_type in ('open', 'send')
+GROUP BY age_bucket;
+
+#Exercise 4
+SELECT c.customer_id
+FROM customer_contracts c
+LEFT JOIN products p
+ON c.product_id = p.product_id
+GROUP BY c.customer_id
+HAVING COUNT(DISTINCT p.product_category) = 3;
+
+#Exercise 5
+
+
+#Exercise 6
+SELECT p.product_name, sum(o.unit) as unit
+FROM Products p
+RIGHT JOIN Orders o
+ON o.product_id = p.product_id
+WHERE EXTRACT(year from o.order_date) = 2020
+AND EXTRACT(month from o.order_date) = 2
+GROUP BY o.product_id
+HAVING unit >= 100;
+
+

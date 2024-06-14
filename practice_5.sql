@@ -34,7 +34,16 @@ GROUP BY c.customer_id
 HAVING COUNT(DISTINCT p.product_category) = 3;
 
 #Exercise 5
-
+SELECT 
+    e.employee_id, 
+    e.name, 
+    count(r.reports_to) as reports_count, 
+    round(avg(r.age)) as average_age
+FROM Employees e
+INNER JOIN EmployeeS r
+ON e.employee_id = r.reports_to
+GROUP BY e.employee_id
+ORDER BY e.employee_id;
 
 #Exercise 6
 SELECT p.product_name, sum(o.unit) as unit

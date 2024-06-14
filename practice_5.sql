@@ -46,4 +46,11 @@ AND EXTRACT(month from o.order_date) = 2
 GROUP BY o.product_id
 HAVING unit >= 100;
 
+#Exercise 7
+SELECT p.page_id 
+FROM pages p
+FULL OUTER JOIN page_likes l
+ON p.page_id = l.page_id
+WHERE l.user_id IS NULL
+ORDER BY p.page_id ASC;
 

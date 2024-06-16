@@ -63,3 +63,67 @@ ON p.page_id = l.page_id
 WHERE l.user_id IS NULL
 ORDER BY p.page_id ASC;
 
+# MID_COURSE TEST
+1. Task: Tạo danh sách tất cả chi phí thay thế (replacement costs )  khác nhau của các film.
+Question: Chi phí thay thế thấp nhất là bao nhiêu?
+SELECT DISTINCT replacement_cost 
+	FROM film
+	ORDER BY replacement_cost ASC;
+
+2.Task: Viết một truy vấn cung cấp cái nhìn tổng quan về số lượng phim có chi phí thay thế trong các phạm vi chi phí sau
+1.	low: 9.99 - 19.99
+2.	medium: 20.00 - 24.99
+3.	high: 25.00 - 29.99
+Question: Có bao nhiêu phim có chi phí thay thế thuộc nhóm “low”?
+
+SELECT 
+CASE 
+	WHEN replacement_cost BETWEEN 9.99 AND 19.99 THEN 'low'
+	WHEN replacement_cost BETWEEN 20.00 AND 24.99 THEN 'medium'
+	ELSE 'high' END AS category,
+COUNT(*) 
+FROM film
+GROUP BY category;
+
+3. Task: Tạo danh sách các film_title  bao gồm tiêu đề (title), độ dài (length) và tên danh mục (category_name) được sắp xếp theo độ dài giảm dần. Lọc kết quả để chỉ các phim trong danh mục 'Drama' hoặc 'Sports'.
+Question: Phim dài nhất thuộc thể loại nào và dài bao nhiêu?
+
+SELECT f.title, f.length, c.name
+	FROM film f
+	JOIN film_category fc
+	ON f.film_id = fc.film_id
+	JOIN category c
+	ON c.category_id = fc.category_id
+	WHERE c.name IN ('Drama', 'Sports')
+	ORDER BY f.length DESC;
+
+4. Task: Đưa ra cái nhìn tổng quan về số lượng phim (tilte) trong mỗi danh mục (category).
+Question:Thể loại danh mục nào là phổ biến nhất trong số các bộ phim?
+
+SELECT c.name, count(*) as total
+	FROM film f
+	JOIN film_category fc
+	ON f.film_id = fc.film_id
+	JOIN category c
+	ON c.category_id = fc.category_id
+	GROUP BY c.name
+	ORDER BY total DESC;
+
+5. Task:Đưa ra cái nhìn tổng quan về họ và tên của các diễn viên cũng như số lượng phim họ tham gia.
+Question: Diễn viên nào đóng nhiều phim nhất?
+
+SELECT CONCAT(a.first_name,' ', a.last_name) as actor_name, 
+	count(*) as total_movies
+FROM film f
+JOIN film_actor fa
+ON f.film_id = fa.film_id
+JOIN actor a
+ON a.actor_id = fa.actor_id
+GROUP BY actor_name
+ORDER BY total_movies DESC;
+
+6. Task: Tìm các địa chỉ không liên quan đến bất kỳ khách hàng nào.
+Question: Có bao nhiêu địa chỉ như vậy?
+
+
+

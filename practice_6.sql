@@ -33,3 +33,25 @@ SELECT * FROM electronics_cte
 ORDER BY category ASC, total_spend DESC
 
 #Exercise 3
+# cte solution
+WITH call_count_cte AS (
+SELECT policy_holder_id, count(DISTINCT case_id) AS number_of_calls
+FROM callers
+GROUP BY policy_holder_id)
+
+SELECT COUNT(*) AS policy_holder_count FROM call_count_cte
+WHERE number_of_calls > 2
+
+# subquery solution
+SELECT COUNT(policy_holder_id) AS policy_holder_count
+FROM (
+  SELECT 
+    policy_holder_id,
+    COUNT(case_id) AS number_of_calls
+  FROM callers
+  GROUP BY policy_holder_id
+  HAVING COUNT(case_id) >= 3
+) AS call_records;
+
+#Exercise 4
+

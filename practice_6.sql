@@ -54,4 +54,25 @@ FROM (
 ) AS call_records;
 
 #Exercise 4
+SELECT EXTRACT(MONTH from event_date),
+COUNT(DISTINCT user_id)
+FROM user_actions
+WHERE EXTRACT(MONTH from event_date) = 7
+AND user_id IN (SELECT user_id FROM user_actions WHERE EXTRACT(MONTH from event_date) = 6)
+GROUP BY 1
+ORDER BY 1,2
+
+#Exercise 5
+SELECT 
+    DATE_FORMAT(trans_date, '%Y-%m') AS month, 
+    country,
+    COUNT(*) AS trans_count,
+    SUM(IF(state='approved', 1,0)) AS approved_count,
+    SUM(amount) AS trans_total_amount,
+    SUM(IF(state='approved', amount, 0)) AS approved_total_amount
+FROM Transactions
+GROUP BY month, country
+
+#Exercise 6
+
 

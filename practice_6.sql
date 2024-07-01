@@ -174,6 +174,19 @@ ORDER BY AVG(mr.rating) DESC, m.title ASC
 LIMIT 1)
 
 #Exercise 12
+WITH new_cte AS (
+    SELECT requester_id as id, count(*) as num 
+    FROM RequestAccepted
+    GROUP BY requester_id
+    UNION ALL
+    SELECT accepter_id as id, count(*) as num
+    FROM RequestAccepted
+    GROUP BY accepter_id
+)
 
+SELECT id, sum(num) as num from new_cte
+GROUP BY id
+ORDER BY num DESC 
+LIMIT 1
 
 

@@ -19,4 +19,31 @@ SELECT
 FROM yearly_spend_cte
 
 #Exercise 2
+#Method 1 - cte
+  
+WITH card_launch_cte AS (
+SELECT 
+  card_name,
+  issued_amount,
+  MAKE_DATE(issue_year, issue_month, 1) AS issue_date,
+  MIN(MAKE_DATE(issue_year, issue_month, 1)) OVER (
+    PARTITION BY card_name) AS launch_date
+FROM monthly_cards_issued)
+
+SELECT card_name, issued_amount
+FROM card_launch_cte
+WHERE issue_date = launch_date
+ORDER BY issued_amount DESC
+
+#Method 2 - FIRST_VALUE()
+SELECT 
+  DISTINCT card_name,
+  FIRST_VALUE(issued_amount) OVER (
+    PARTITION BY card_name ORDER BY issue_year, issue_month) AS issued_amount
+
+FROM monthly_cards_issued
+ORDER BY issued_amount DESC
+
+#Exercise 3
+
 

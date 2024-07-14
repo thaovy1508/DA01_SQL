@@ -45,5 +45,21 @@ FROM monthly_cards_issued
 ORDER BY issued_amount DESC
 
 #Exercise 3
+WITH ranking_cte AS (
+SELECT 
+  user_id, 
+  spend,
+  transaction_date,
+  RANK() OVER(PARTITION BY user_id ORDER BY transaction_date) AS rank_num
+FROM transactions)
+
+SELECT 
+  user_id,
+  spend,
+  transaction_date
+FROM ranking_cte
+WHERE rank_num = 3
+
+#Exercise 4
 
 

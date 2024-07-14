@@ -45,6 +45,7 @@ FROM monthly_cards_issued
 ORDER BY issued_amount DESC
 
 #Exercise 3
+  -- cte
 WITH ranking_cte AS (
 SELECT 
   user_id, 
@@ -59,6 +60,21 @@ SELECT
   transaction_date
 FROM ranking_cte
 WHERE rank_num = 3
+
+  -- subquery 
+SELECT 
+  user_id,
+  spend,
+  transaction_date
+FROM (
+  SELECT 
+    user_id, 
+    spend, 
+    transaction_date, 
+    ROW_NUMBER() OVER (
+      PARTITION BY user_id ORDER BY transaction_date) AS row_num
+  FROM transactions) AS trans_num 
+WHERE row_num = 3;
 
 #Exercise 4
 

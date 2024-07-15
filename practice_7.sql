@@ -77,6 +77,7 @@ FROM (
 WHERE row_num = 3;
 
 #Exercise 4
+  -- cte 
 WITH purchase_cte AS (
 SELECT 
   transaction_date, user_id,
@@ -90,7 +91,19 @@ SELECT
 FROM purchase_cte
 WHERE recent_date = 1
 ORDER BY transaction_date ASC
-
+  
+  -- subquery
+SELECT 
+  transaction_date, user_id,
+  COUNT(product_id) AS purchase_count
+FROM user_transactions
+WHERE (user_id, transaction_date) IN
+    (SELECT user_id, MAX(transaction_date) 
+    FROM user_transactions
+    GROUP BY user_id)
+GROUP BY user_id, transaction_date
+ORDER BY transaction_date
+  
 #Exercise 5
 
 

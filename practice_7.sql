@@ -77,5 +77,20 @@ FROM (
 WHERE row_num = 3;
 
 #Exercise 4
+WITH purchase_cte AS (
+SELECT 
+  transaction_date, user_id,
+  COUNT(*) OVER(PARTITION BY user_id, transaction_date ORDER BY transaction_date) AS purchase_count,
+  ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY transaction_date DESC) AS recent_date
+FROM user_transactions )
+
+SELECT 
+  transaction_date, user_id,
+  purchase_count
+FROM purchase_cte
+WHERE recent_date = 1
+ORDER BY transaction_date ASC
+
+#Exercise 5
 
 

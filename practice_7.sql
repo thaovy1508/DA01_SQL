@@ -116,5 +116,76 @@ FROM tweets;
 
 #Exercise 6
 
+-- lag function
+WITH transaction_cte AS (
+SELECT 
+  transaction_id,
+  merchant_id,
+  credit_card_id,
+  amount,
+  transaction_timestamp,
+  EXTRACT(EPOCH FROM transaction_timestamp -
+    LAG(transaction_timestamp) OVER (
+      PARTITION BY merchant_id, credit_card_id, amount
+      ORDER BY transaction_timestamp)
+  )/60 AS mins_diff
+FROM transactions )
 
+SELECT count(*) AS payment_count
+FROM transaction_cte
+WHERE mins_diff <= 10
+
+-- self join
+SELECT count(*)
+FROM transactions t1
+JOIN transactions t2
+ON t1.merchant_id = t2.merchant_id
+AND t1.credit_card_id = t2.credit_card_id
+AND t1.amount = t2.amount
+AND t1.transaction_id < t2.transaction_id
+AND t2.transaction_timestamp - t1.transaction_timestamp <= INTERVAL '10 MINUTES'
+
+#Exercise 7
+
+  -- rank()
+  
+WITH ranking_cte AS (
+SELECT 
+  category,
+  product,
+  SUM(spend) AS total_spend,
+  RANK() OVER ( 
+    PARTITION BY category ORDER BY SUM(spend)desc) AS RANK_NUM
+FROM product_spend
+WHERE EXTRACT(YEAR FROM transaction_date) = 2022
+GROUP BY category, product)
+
+SELECT 
+  category,
+  product,
+  total_spend
+FROM ranking_cte
+WHERE RANK_NUM <= 2
+ORDER BY category, total_spend DESC
+
+#Exercise 8
+-- dense_rank
+
+WITH top_10_cte AS (
+  SELECT 
+    artists.artist_name,
+    DENSE_RANK() OVER (
+      ORDER BY COUNT(songs.song_id) DESC) AS artist_rank
+  FROM artists
+  INNER JOIN songs
+    ON artists.artist_id = songs.artist_id
+  INNER JOIN global_song_rank AS ranking
+    ON songs.song_id = ranking.song_id
+  WHERE ranking.rank <= 10
+  GROUP BY artists.artist_name
+)
+
+SELECT artist_name, artist_rank
+FROM top_10_cte
+WHERE artist_rank <= 5
 

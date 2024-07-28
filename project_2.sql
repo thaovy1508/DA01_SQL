@@ -50,3 +50,36 @@ from avg_cte
 -- 3. Output: first_name, last_name, gender, age, tag 
       Insights: 
 
+WITH order_cte as (
+select  o.order_id, 
+        o.user_id, 
+        i.sale_price,
+        u.first_name,
+        u.last_name,
+        u.gender,
+        u.age,
+        EXTRACT(YEAR from o.created_at) || '-' || EXTRACT(month from o.created_at) as month_year
+from bigquery-public-data.thelook_ecommerce.orders o
+left join bigquery-public-data.thelook_ecommerce.order_items i
+on i.order_id = o.order_id
+right join bigquery-public-data.thelook_ecommerce.users u
+on i.user_id = u.id
+where o.status='Complete'
+and DATE(o.created_at) between '2019-01-01' and '2022-04-30'),
+
+avg_cte as (
+select month_year,
+      count(distinct user_id) as distinct_user,
+      count(distinct order_id) as total_order,
+      sum(sale_price) as total_price
+from order_cte
+group by 1
+order by 1)
+
+select month_year,
+       distinct_user,
+       total_price/total_order as average_order_value
+from avg_cte
+
+
+

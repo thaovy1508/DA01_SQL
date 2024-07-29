@@ -81,5 +81,5 @@ select month_year,
        total_price/total_order as average_order_value
 from avg_cte
 
-
+id, a.gender, age, first_name, last_name
 

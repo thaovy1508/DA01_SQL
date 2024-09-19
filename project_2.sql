@@ -83,3 +83,31 @@ union all
 (select gender, count(*) as total, 'oldest' as tag
 from max_cte 
 group by gender)
+
+-- 4. Output: month_year ( yyyy-mm), product_id, product_name, sales, cost, profit, rank_per_month
+Select * from (
+  With product_profit as (
+    Select CAST(FORMAT_DATE('%Y-%m' , t1.delivered_at) AS String) as month_year,
+           t1.product_id as product_id,
+           t2.name as product_name,
+           round(sum(t1.sale_price),2) as sales,
+           round(sum(t2.cost),2) as cost,
+           round(sum(t1.sale_price) - sum(t2.cost),2) as profit
+    from bigquery-public-data.thelook_ecommerce.order_items as t1
+    join bigquery-public-data.thelook_ecommerce.products as t2
+    on t1.product_id = t2.id
+    where t1.status = 'Complete'
+    group by month_year, t1.product_id, t2.name
+
+  )
+
+  Select *, 
+  dense_rank() OVER (
+    PARTITION BY month_year
+    ORDER BY month_year, profit) as rank
+    from product_profit
+  ) as rank_table
+where rank_table.rank <= 5
+order by rank_table.month_year
+
+-- 5. 

@@ -111,3 +111,20 @@ where rank_table.rank <= 5
 order by rank_table.month_year
 
 -- 5. 
+Select 
+
+     CAST(FORMAT_DATE('%Y-%m-%d' , t1.created_at) AS String) as day,
+     t2.category as product_categories,
+     round(sum(t1.sale_price),2) as revenue
+          
+from bigquery-public-data.thelook_ecommerce.order_items as t1
+join bigquery-public-data.thelook_ecommerce.products as t2
+on t1.product_id = t2.id
+where t1.status = 'Complete'
+and cast(t1.created_at as date) between date_add(CURRENT_DATE, INTERVAL -3 MONTH) and CURRENT_DATE
+group by day, category
+order by day
+
+  
+
+ 
